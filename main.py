@@ -77,6 +77,7 @@ async def ping():
 
 
 @app.get("/", response_class=HTMLResponse)
+@app.head("/")
 async def home():
     """Simple home page"""
     html_content = f'''
