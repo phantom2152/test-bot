@@ -6,9 +6,9 @@ from telegram import Update
 
 from config import SECRET_TOKEN
 from bot import ptb
-import logging
+from utils.logger import logger
 
-logger = logging.getLogger(__name__)
+
 router = APIRouter()
 
 
