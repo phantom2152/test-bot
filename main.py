@@ -7,6 +7,8 @@ from bot import ptb
 from handlers import register_handlers
 from routes import router
 from utils.logger import logger
+from models import Base
+from db import engine
 
 
 @asynccontextmanager
@@ -32,6 +34,8 @@ async def lifespan(app: FastAPI):
 
         async with ptb:
             try:
+                logger.info("Creating database tables if not exist...")
+                Base.metadata.create_all(bind=engine)
                 await ptb.start()
                 logger.info("✅ Telegram bot started")
                 yield
