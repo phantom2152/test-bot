@@ -15,6 +15,7 @@ load_dotenv()
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+SECRET_TOKEN = os.getenv("WEBHOOK_SECRET")
 PORT = int(os.getenv("PORT", 8000))
 
 logging.basicConfig(
@@ -39,10 +40,10 @@ ptb = (
 async def lifespan(app: FastAPI):
     """Manage application lifespan"""
     # Set webhook if WEBHOOK_URL is provided
-    if WEBHOOK_URL:
+    if WEBHOOK_URL and SECRET_TOKEN:
         webhook_url = f"{WEBHOOK_URL}/webhook"
         logger.info(f"Setting webhook to {webhook_url}")
-        await ptb.bot.set_webhook(webhook_url)
+        await ptb.bot.set_webhook(webhook_url, secret_token=SECRET_TOKEN)
 
     # Start the telegram application
     async with ptb:
@@ -112,6 +113,12 @@ async def home():
 async def process_update(request: Request):
     """Process incoming webhook from Telegram"""
     try:
+        telegram_token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
+
+        if telegram_token != SECRET_TOKEN:
+            logger.warning("Invalid secret token in webhook request")
+            return Response(status_code=HTTPStatus.UNAUTHORIZED)
+
         req = await request.json()
         update = Update.de_json(req, ptb.bot)
         await ptb.process_update(update)
