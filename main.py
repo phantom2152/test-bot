@@ -25,10 +25,13 @@ async def lifespan(app: FastAPI):
             sys.exit(1)
 
         webhook_url = f"{WEBHOOK_URL.strip().rstrip('/')}/webhook"
-        logger.info(f"Setting webhook to {webhook_url}")
 
         try:
-            await ptb.bot.set_webhook(webhook_url, secret_token=SECRET_TOKEN)
+            logger.info(f"Setting webhook to {webhook_url}")
+            result = await ptb.bot.set_webhook(
+                webhook_url, secret_token=SECRET_TOKEN, drop_pending_updates=True
+            )
+            logger.info(f"✅ Webhook set result: {result}")
         except Exception as e:
             logger.critical(f"❌ Failed to set webhook: {e}")
             sys.exit(1)
