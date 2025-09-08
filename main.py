@@ -6,8 +6,6 @@ from config import WEBHOOK_URL, SECRET_TOKEN
 from routes import router
 from utils.logger import logger
 from utils.common import init_bot_and_db
-from models import Base
-from db import engine
 
 ptb = init_bot_and_db()
 
@@ -60,10 +58,3 @@ app = FastAPI(
 )
 
 app.include_router(router)
-
-
-if __name__ == "__main__":
-
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
