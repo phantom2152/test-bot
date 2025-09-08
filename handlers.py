@@ -56,9 +56,28 @@ async def link(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         logger.error("Error while linking account")
         await update.message.reply_text("Something is broken from our side")
 
+    finally:
+        db.close()
+
+
+async def account(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    telegram_id = update.effective_user.id
+    db = SessionLocal()
+
+    try:
+        existing = db.get(AccessToken, telegram_id)
+
+        if not existing:
+            await update.message.reply_text(
+                "You are not registerd" "Please use /link to connect your seedr account"
+            )
+
+    except Exception as e:
+        pass
+
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Help!")
+    await update.message.reply_text("Help lol!")
 
 
 # ✅ Callback handler for button clicks

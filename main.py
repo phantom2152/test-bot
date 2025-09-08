@@ -3,12 +3,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from config import WEBHOOK_URL, SECRET_TOKEN
-from bot import ptb
-from handlers import register_handlers
 from routes import router
 from utils.logger import logger
+from utils.common import init_bot_and_db
 from models import Base
 from db import engine
+
+ptb = init_bot_and_db()
 
 
 @asynccontextmanager
@@ -23,7 +24,7 @@ async def lifespan(app: FastAPI):
             )
             sys.exit(1)
 
-        webhook_url = f"{WEBHOOK_URL}/webhook"
+        webhook_url = f"{WEBHOOK_URL.strip().rstrip('/')}/webhook"
         logger.info(f"Setting webhook to {webhook_url}")
 
         try:
@@ -34,16 +35,14 @@ async def lifespan(app: FastAPI):
 
         async with ptb:
             try:
-                logger.info("Creating database tables if not exist...")
-                Base.metadata.create_all(bind=engine)
                 await ptb.start()
-                logger.info("✅ Telegram bot started")
+                logger.info("✅ Telegram bot started in webhook mode")
                 yield
             except Exception as e:
                 logger.critical(f"❌ Failed to start Telegram bot: {e}")
                 sys.exit(1)
             finally:
-                logger.info("Shutting down telegram bot")
+                logger.info("🔻 Shutting down telegram bot")
                 await ptb.stop()
 
     except Exception as e:
@@ -57,8 +56,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Register routes
 app.include_router(router)
 
-# Register Telegram handlers
-register_handlers(ptb)
+
+if __name__ == "__main__":
+
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
