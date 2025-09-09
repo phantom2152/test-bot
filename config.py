@@ -8,7 +8,9 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 SECRET_TOKEN = os.getenv("WEBHOOK_SECRET")
 PORT = int(os.getenv("PORT", 8000))
 
-TURSO_DATABASE_URL = os.getenv("TURSO_DATABASE_URL")
-TURSO_AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN")
+
+PSQL_USERNAME = os.getenv("PSQL_USERNAME")
+PSQL_PASSWORD = os.getenv("PSQL_PASSWORD")
+PSQL_URL = os.getenv("PSQL_URL")
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "prod")

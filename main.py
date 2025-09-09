@@ -1,13 +1,12 @@
 import sys
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from bot import ptb
 
 from config import WEBHOOK_URL, SECRET_TOKEN
+from handlers import register_handlers
 from routes import router
 from utils.logger import logger
-from utils.common import init_bot_and_db
-
-ptb = init_bot_and_db()
 
 
 @asynccontextmanager
@@ -50,6 +49,9 @@ async def lifespan(app: FastAPI):
         logger.critical(f"❌ Unexpected error during startup: {e}")
         sys.exit(1)
 
+
+# Register all commands
+register_handlers(ptb)
 
 app = FastAPI(
     title="Telegram Bot with Health Checks",

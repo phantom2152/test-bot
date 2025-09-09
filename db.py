@@ -1,12 +1,10 @@
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from config import TURSO_DATABASE_URL, TURSO_AUTH_TOKEN
+from config import PSQL_PASSWORD, PSQL_URL, PSQL_USERNAME
 
-# Create engine for Turso (libsql)
+# Create engine for Cockroachdb
 engine = create_engine(
-    f"sqlite+{TURSO_DATABASE_URL}?secure=true",
-    connect_args={"auth_token": TURSO_AUTH_TOKEN},
+    f"cockroachdb://{PSQL_USERNAME}:{PSQL_PASSWORD}@{PSQL_URL}",
 )
 
 # Session factory
