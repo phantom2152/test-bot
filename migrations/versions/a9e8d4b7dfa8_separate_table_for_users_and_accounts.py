@@ -32,7 +32,7 @@ def upgrade() -> None:
         if_not_exists=True,
     )
     # op.drop_index(op.f('access_tokens_telegram_id_key'), table_name='access_tokens', postgresql_ops={'telegram_id': None}, postgresql_using='prefix')
-    op.drop_table("access_tokens")
+    # op.drop_table("access_tokens")
     # ### end Alembic commands ###
 
 
